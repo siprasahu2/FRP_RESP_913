@@ -1,0 +1,99 @@
+package com.TP.FRP_RESP_913;
+
+
+import com.wisor.brms.fpt.DateCheck;
+import com.wisor.brms.fpt.Populated;
+import com.wisor.brms.fpt.Position;
+import com.wisor.brms.fpt.TimeFormatCheck;
+import com.wisor.brms.fpt.RangeOfValues;
+import com.wisor.brms.fpt.Equals;
+import com.wisor.brms.fpt.DatatypeCheck;
+import com.wisor.brms.fpt.xpath.Occurence;
+import com.wisor.brms.fpt.Contains;
+import com.wisor.brms.fpt.dao.SupplementOrderCheckVZE;
+import com.wisor.brms.fpt.DateFormatCheck;
+import com.wisor.brms.fpt.Required;
+import com.wisor.brms.fpt.Prohibited;
+import com.wisor.brms.fpt.xpath.XPathProcessor;
+import com.wisor.brms.fpt.isValidValue;
+import com.wisor.brms.fpt.LengthCheck;
+import com.wisor.brms.fpt.CapitalLetterCheck;
+import com.wisor.brms.fpt.ThoroughFareHelperVZW;
+import com.wisor.brms.fpt.SpecialFormat;
+import com.wisor.brms.fpt.ValidValueCheck;
+import com.wisor.brms.fpt.CommaSeparatedSpace;
+import com.wisor.brms.fpt.DisplayMessage;
+import com.wisor.brms.fpt.ReqTypeAct;
+import com.wisor.brms.fpt.SpaceCheck;
+import com.wisor.brms.fpt.TNFormat;
+import com.wisor.brms.fpt.ThoroughFareHelperVZE;
+import com.wisor.brms.fpt.xpath.Unique;
+import ilog.rules.xml.IlrXmlObject;
+import ilog.rules.factory.IlrReflect;
+import ilog.rules.xml.binding.IlrXmlDefaultDataDriver;
+import java.io.StringReader;
+import ilog.rules.xml.IlrXmlErrorException;
+import ilog.rules.xml.IlrXmlError;
+import com.wisor.common.brms.exception.BRMSValidationException;
+import ilog.rules.data.IlrError;
+import ilog.rules.xml.runtime.IlrXmlRtException;
+import com.wisor.brms.ErrorResponse;
+function void loadXMLDataFile(java.lang.String xmlInstance)
+{
+try
+ {
+	reflect = context.getRuleset().reflect;
+    IlrXmlDefaultDataDriver dataDriver = new IlrXmlDefaultDataDriver(reflect);
+	object = dataDriver.readObject(new StringReader(xmlInstance));
+	dataDriver.assertObjects(object,context,null);
+ }
+ catch ( Exception e ){
+  if(e instanceof IlrXmlErrorException){
+   IlrXmlErrorException schemaException = (IlrXmlErrorException)e;
+   IlrXmlError[] errors = schemaException.getErrors();
+   BRMSValidationException[] brmsArray = new BRMSValidationException[errors.length];
+    for(int i=0;i<errors.length;i++)
+   {
+    BRMSValidationException aBRMSValidationException = new BRMSValidationException();
+    aBRMSValidationException.XPath=errors[i].XPath;
+    aBRMSValidationException.type=errors[i].type;
+    String source = errors[i].source;
+    
+  
+   System.out.println("source "+errors[i].source);
+   System.out.println("Type "+errors[i].type);
+   System.out.println("Type "+errors[i].XPath);
+   String message = ((IlrError)(errors[i])).message;
+   System.out.println("message "+message);
+    
+      if(source == null)
+    {
+    	source = message + errors[i].XPath;
+    }
+    if(e instanceof IlrXmlRtException)
+    {
+    	IlrXmlRtException excep = (IlrXmlRtException)e;
+    	excep.printStackTrace();
+    }
+    
+    aBRMSValidationException.message=errors[i].source;
+    brmsArray[i]=aBRMSValidationException;
+    ErrorResponse resp = new ErrorResponse(errors[i].type,source);
+    xmlResponse.add(resp);
+    
+   }
+  // xmlResponse.add(brmsArray);
+     } else{
+   	e.printStackTrace();
+  }
+ }
+  
+}
+
+
+
+
+
+
+
+
